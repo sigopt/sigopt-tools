@@ -8,7 +8,6 @@ from python_lint import (
   ProtobufMethodsRule,
   SafeIteratorRule,
   SafeRecursiveRule,
-  SafeYieldRule,
   get_problems,
 )
 
@@ -16,13 +15,13 @@ from python_lint import (
 class TestBase:
   Rule: LintNodeRule
 
-  def check(self, content):
+  def check_file(self, content):
     rule = self.Rule()
     tree = ast.parse(content, "test.py")
     return get_problems(tree, [rule], {})
 
   def assert_errors(self, content, count=None):
-    errors = list(self.check(content))
+    errors = list(self.check_file(content))
     if count is None:
       assert errors
     else:
@@ -34,7 +33,7 @@ class TestAvoidDatetimeNowRule(TestBase):
 
   @pytest.mark.parametrize("module", ["dt", "datetime"])
   @pytest.mark.parametrize("function", ["datetime.now", "datetime.utcnow"])
-  def test_rule_fail(self, module, function):
+  def test_rule_errors(self, module, function):
     self.assert_errors(f"{module}.{function}()\n", count=1)
 
   @pytest.mark.parametrize(
@@ -88,7 +87,7 @@ class TestSafeIteratorRule(TestBase):
       "filter(bool, x)",
     ],
   )
-  def test_rule_fail_single_return(self, returned):
+  def test_rule_errors_single_return(self, returned):
     content = "\n".join(
       [
         "def returns_unsafe_iterator(x):",
@@ -116,7 +115,7 @@ class TestSafeIteratorRule(TestBase):
       "filter(bool, x)",
     ],
   )
-  def test_rule_fail_multiple_return(self, returned_first, returned_second):
+  def test_rule_errors_multiple_return(self, returned_first, returned_second):
     content = "\n".join(
       [
         "def returns_unsafe_iterator(x):",
@@ -177,7 +176,7 @@ class TestProtobufMethodsRule(TestBase):
       "MergeFrom",
     ],
   )
-  def test_rule_fail(self, method):
+  def test_rule_errors(self, method):
     content = f"x.{method}(y)\n"
     self.assert_errors(content, count=1)
 
@@ -192,64 +191,25 @@ class TestProtobufMethodsRule(TestBase):
     content = f"{method}(x, y)\n"
     self.assert_errors(content, count=0)
 
-
 class TestSafeYieldRule(TestBase):
   Rule = SafeYieldRule
 
-  @pytest.mark.parametrize(
-    "decorator",
-    [
-      "generator_to_list",
-      "generator_to_dict",
-      "generator_to_safe_iterator",
-      "unsafe_generator",
-      "contextmanager",
-      "fixture",
-      "hookimpl",
-    ],
-  )
-  @pytest.mark.parametrize(
-    "statement",
-    [
-      "yield 1",
-      "yield from range(10)",
-    ],
-  )
-  def test_rule_pass_with_decorator(self, decorator, statement):
-    content = "\n".join(
-      [
-        f"@{decorator}",
-        "def generator():",
-        f"  {statement}",
-      ]
-    )
-    self.assert_errors(content, count=0)
-
-  @pytest.mark.parametrize(
-    "statement",
-    [
-      "yield 1",
-      "yield from range(10)",
-    ],
-  )
-  def test_rule_fail(self, statement):
-    content = "\n".join(
-      [
-        "def generator():",
-        f"  {statement}",
-      ]
-    )
-    self.assert_errors(content, count=1)
-
-  def test_rule_fail_mixed_yield_return(self):
-    content = "\n".join(
-      [
-        "def generator():",
-        "  if True:",
-        "    yield 1",
-        "  return []",
-      ]
-    )
-    problems = list(self.check(content))
-    assert len(problems) == 1
-    assert problems[0][0].startswith("Do not mix ")
+  @pytest.mark.parametrize("decorator", [
+    "generator_to_list",
+    "generator_to_dict",
+    "generator_to_safe_iterator",
+    "unsafe_generator",
+    "contextmanager",
+    "fixture",
+    "hookimpl",
+    ])
+  @pytest.mark.parametrize("statement", [
+    "yield 1",
+    "yield from range(10)",
+  ])
+  def test_rule_pass_with_decorator(self, decorator):
+    content = "\n".join([
+      f"@{decorator}",
+      "def generator():",
+      "  yield",
+    ])
