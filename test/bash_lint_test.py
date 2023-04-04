@@ -10,7 +10,7 @@ from bash_lint import bash_lint
   [
     ("#!/usr/bin/env bash", 0),
     ("#!/usr/bin/env sh", 0),
-    ("", 1),
+    ("#!/usr/bin/env python3", 1),
     ("", 1),
   ],
 )
