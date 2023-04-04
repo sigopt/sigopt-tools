@@ -55,18 +55,6 @@ repos:
           - pytest
   - repo: local
     hooks:
-      # - id: custom-bash-lint
-      #   name: custom-bash-lint
-      #   entry: tools/lint/bash/custom_lint.py
-      #   language: python
-      #   types: [shell]
-      # - id: custom-python-lint
-      #   name: custom-python-lint
-      #   entry: ./pp tools/lint/python/custom_lint.py
-      #   language: python
-      #   additional_dependencies:
-      #     - numpy
-      #   types: [python]
       - id: pytest
         name: pytest
         entry: env PYTHONPATH=. pytest
