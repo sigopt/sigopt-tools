@@ -104,23 +104,14 @@ def file_has_disclaimer(file, filetype):
   return all(regex.match(line) for regex, line in zip(DISCLAIMER_RE_LINES, to_check))
 
 
-def check_all(directory, verbose=False):
-  missing = []
-  if os.path.isfile(directory):
-    gen = [("", "", [directory])]
-  else:
-    gen = os.walk(directory)
-  for dirpath, _, filenames in gen:
-    for filename in filenames:
-      absolute_filename = os.path.join(dirpath, filename)
-      filetype = guess_filetype(absolute_filename)
-      if filetype and os.stat(absolute_filename).st_size > 0:
-        if verbose:
-          print(f"Checking: {absolute_filename}")  # noqa: T001
-        with open(absolute_filename) as fp:
-          if not file_has_disclaimer(fp, filetype):
-            missing.append(absolute_filename)
-  return missing
+def file_needs_disclaimer(filename, verbose=False):
+  filetype = guess_filetype(filename)
+  if not filetype or os.stat(filename).st_size == 0:
+    return False
+  if verbose:
+    print(f"Checking: {filename}")  # noqa: T001
+  with open(filename) as fp:
+    return not file_has_disclaimer(fp, filetype)
 
 
 def fix_in_place(file, filetype):
@@ -157,14 +148,15 @@ def fix_all(filenames, verbose=False):
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser()
-  parser.add_argument("directories", action="extend", nargs="+", type=str)
+  parser.add_argument("files", action="extend", nargs="+", type=str)
   parser.add_argument("--fix-in-place", "-f", action="store_true")
   parser.add_argument("--verbose", "-v", action="store_true")
 
   args = parser.parse_args()
   missing = []
-  for dirname in args.directories:
-    missing.extend(check_all(dirname, verbose=args.verbose))
+  for filename in args.files:
+    if file_needs_disclaimer(filename, verbose=args.verbose):
+      missing.append(filename)
   if args.fix_in_place:
     missing = fix_all(missing, verbose=args.verbose)
   if missing:
