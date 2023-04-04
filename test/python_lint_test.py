@@ -5,6 +5,7 @@ import pytest
 from python_lint import (
   AddingStringsRule,
   AvoidDatetimeNowRule,
+  ForbidImportTestSuiteRule,
   ForbidTestSuiteInheritanceRule,
   GeneratorExpressionRule,
   LintNodeRule,
@@ -17,8 +18,8 @@ from python_lint import (
 )
 
 
-class Base:
-  Rule: LintNodeRule
+class RuleTestBase:
+  Rule: type[LintNodeRule]
 
   def check(self, content):
     rule = self.Rule()
@@ -33,7 +34,7 @@ class Base:
       assert len(errors) == count
 
 
-class TestAvoidDatetimeNowRule(Base):
+class TestAvoidDatetimeNowRule(RuleTestBase):
   Rule = AvoidDatetimeNowRule
 
   @pytest.mark.parametrize("module", ["dt", "datetime"])
@@ -51,7 +52,7 @@ class TestAvoidDatetimeNowRule(Base):
     self.assert_errors(f"{example}\n", count=0)
 
 
-class TestSafeRecursiveRule(Base):
+class TestSafeRecursiveRule(RuleTestBase):
   Rule = SafeRecursiveRule
 
   example_rule_pass = "\n".join(
@@ -80,7 +81,7 @@ class TestSafeRecursiveRule(Base):
     self.assert_errors(example, count=errors)
 
 
-class TestSafeIteratorRule(Base):
+class TestSafeIteratorRule(RuleTestBase):
   Rule = SafeIteratorRule
 
   @pytest.mark.parametrize(
@@ -171,7 +172,7 @@ class TestSafeIteratorRule(Base):
     self.assert_errors(content, count=0)
 
 
-class TestProtobufMethodsRule(Base):
+class TestProtobufMethodsRule(RuleTestBase):
   Rule = ProtobufMethodsRule
 
   @pytest.mark.parametrize(
@@ -197,7 +198,7 @@ class TestProtobufMethodsRule(Base):
     self.assert_errors(content, count=0)
 
 
-class TestSafeYieldRule(Base):
+class TestSafeYieldRule(RuleTestBase):
   Rule = SafeYieldRule
 
   @pytest.mark.parametrize(
@@ -259,7 +260,7 @@ class TestSafeYieldRule(Base):
     assert problems[0][0].startswith("Do not mix ")
 
 
-class TestTrailingCommaRule(Base):
+class TestTrailingCommaRule(RuleTestBase):
   Rule = TrailingCommaRule
 
   @pytest.mark.parametrize(
@@ -291,7 +292,7 @@ class TestTrailingCommaRule(Base):
     self.assert_errors(example, count=0)
 
 
-class TestAddingStringsRule(Base):
+class TestAddingStringsRule(RuleTestBase):
   Rule = AddingStringsRule
 
   @pytest.mark.parametrize(
@@ -313,7 +314,7 @@ class TestAddingStringsRule(Base):
     self.assert_errors(example, count=0)
 
 
-class TestGeneratorExpressionRule(Base):
+class TestGeneratorExpressionRule(RuleTestBase):
   Rule = GeneratorExpressionRule
 
   @pytest.mark.parametrize("builtin", ["map", "filter"])
@@ -332,7 +333,7 @@ class TestGeneratorExpressionRule(Base):
     self.assert_errors(example, count=0)
 
 
-class TestForbidTestSuiteInheritanceRule(Base):
+class TestForbidTestSuiteInheritanceRule(RuleTestBase):
   Rule = ForbidTestSuiteInheritanceRule
 
   @pytest.mark.parametrize(
@@ -348,6 +349,30 @@ class TestForbidTestSuiteInheritanceRule(Base):
     "example",
     [
       "class TestClass(Base):\n  pass\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
+
+
+class TestForbidImportTestSuiteRule(RuleTestBase):
+  Rule = ForbidImportTestSuiteRule
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "from . import TestClass\n",
+      "from . import test_function\n",
+    ],
+  )
+  def test_rule_fail(self, example):
+    self.assert_errors(example, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "from . import NotTestClass\n",
+      "from . import not_test_function\n",
     ],
   )
   def test_rule_pass(self, example):

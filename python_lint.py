@@ -218,7 +218,7 @@ class ForbidImportTestSuiteRule(LintNodeRule):
       for alias in node.names:
         name = alias.asname or alias.name
         for prefix in ("Test", "test_"):
-          if name.startswith("Test") or name.startswith("test_"):
+          if name.startswith(prefix):
             return (
               f"Importing the test suite {name} may cause it to get run twice."
               f" Imported objects beginning with `{prefix}` are interpreted by pytest as test suites."
