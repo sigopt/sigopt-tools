@@ -137,7 +137,7 @@ class SafeYieldRule(LintNodeRule):
       "generator_to_dict",
       "generator_to_safe_iterator",
       # Marker to allow opting in to typical behavior.
-      # TODO(SN-1145): Make this a comment that allows custom lint rules to be disabled
+      # TODO(SN-1145): Make this a comment that allows sigopt lint rules to be disabled
       "unsafe_generator",
       # Third-party decorators that use `yield`s to manage control flow
       "contextmanager",
@@ -304,11 +304,11 @@ def check_file(source_name):
   disables = {}
   tokens = list(tokenize.tokenize(io.BytesIO(raw_source.encode()).readline))
   for tk in tokens:
-    disable_marker = "customlint: disable="
-    enable_marker = "customlint: enable="
+    disable_marker = "sigoptlint: disable="
+    enable_marker = "sigoptlint: enable="
     if tk.type == tokenize.COMMENT:
       if enable_marker in tk.string:
-        raise NotImplementedError("Re-enabling customlint disables is not supported")
+        raise NotImplementedError("Re-enabling sigoptlint disables is not supported")
       if disable_marker in tk.string:
         comment_suffix = tk.string[tk.string.find(disable_marker) + len(disable_marker) :]
         rule_names = [r.strip() for r in comment_suffix.split(",")]
@@ -327,7 +327,7 @@ if __name__ == "__main__":
   import subprocess
   import sys
 
-  parser = argparse.ArgumentParser(description="Custom lint rules for python")
+  parser = argparse.ArgumentParser(description="SigOpt lint rules for python")
   parser.add_argument("source_names", nargs="*", help="Sources to check (default to `git ls-files '*.py'`)")
   args = parser.parse_args()
   if args.source_names:
