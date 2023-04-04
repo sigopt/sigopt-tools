@@ -7,7 +7,7 @@ import pytest
 
 from check_copyright_and_license_disclaimers import (
   COPYRIGHT,
-  LICENSE,
+  SPDX_LICENSE,
   Filetype,
   file_has_disclaimer,
   fix_in_place,
@@ -15,12 +15,17 @@ from check_copyright_and_license_disclaimers import (
 )
 
 
+test_license = "TEST LICENSE"
+test_license_line = SPDX_LICENSE.format(license=test_license)
+test_owner = "TEST OWNER"
+test_copyright_line = COPYRIGHT.format(owner=test_owner)
+
 js_disclaimer = "\n".join(
   [
     "/**",
-    f" * {COPYRIGHT}",
+    f" * {test_copyright_line}",
     " *",
-    f" * {LICENSE}",
+    f" * {test_license_line}",
     " */",
     "",
     "",
@@ -38,9 +43,9 @@ js_example_2 = 'import _ from "underscore";\n'
 
 python_disclaimer = "\n".join(
   [
-    f"# {COPYRIGHT}",
+    f"# {test_copyright_line}",
     "#",
-    f"# {LICENSE}",
+    f"# {test_license_line}",
     "",
   ]
 )
@@ -69,9 +74,9 @@ dockerfile_example_2 = "FROM debian:buster-slim\n"
 markdown_disclaimer = "\n".join(
   [
     "<!--",
-    f"{COPYRIGHT}",
+    f"{test_copyright_line}",
     "",
-    f"{LICENSE}",
+    f"{test_license_line}",
     "-->",
     "",
     "",
@@ -91,9 +96,9 @@ markdown_example_2 = "# Title\n"
 less_disclaimer = "\n".join(
   [
     "/**",
-    f" * {COPYRIGHT}",
+    f" * {test_copyright_line}",
     " *",
-    f" * {LICENSE}",
+    f" * {test_license_line}",
     " */",
     "",
   ]
@@ -122,7 +127,7 @@ less_example_2 = '@import "../lib/constants.less";\n'
   ],
 )
 def test_generate_disclaimer(filetype, expected):
-  assert generate_disclaimer(filetype) == expected
+  assert generate_disclaimer(filetype, license_=test_license, owner=test_owner) == expected
 
 
 @pytest.mark.parametrize(
@@ -191,7 +196,7 @@ def test_file_has_disclaimer_with_shebang(disclaimer, content, filetype, exc):
 )
 def test_fix_in_place(disclaimer, content, filetype):
   file = io.StringIO(content)
-  fix_in_place(file, filetype)
+  fix_in_place(file, filetype, license_=test_license, owner=test_owner)
   file.seek(0)
   assert file.read() == f"{disclaimer}{content}"
 
@@ -211,6 +216,6 @@ def test_fix_in_place(disclaimer, content, filetype):
 def test_fix_in_place_with_shebang(disclaimer, content, filetype, exc):
   shebang = f"#!/usr/bin/env {exc}\n"
   file = io.StringIO(f"{shebang}{content}")
-  fix_in_place(file, filetype)
+  fix_in_place(file, filetype, license_=test_license, owner=test_owner)
   file.seek(0)
   assert file.read() == f"{shebang}{disclaimer}{content}"
