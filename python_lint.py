@@ -12,6 +12,8 @@ import tokenize
 
 parser = argparse.ArgumentParser(description="SigOpt lint rules for python")
 parser.add_argument("files", nargs="+")
+parser.add_argument("--include", default="")
+parser.add_argument("--ignore", default="")
 
 
 def find_parent_function(node):
@@ -284,8 +286,8 @@ for Rule in [
   register_rule(Rule)
 
 
-def prepare_all_lint_node_rules():
-  return [Rule() for Rule in REGISTERED_RULES.values()]
+def prepare_rules(enabled_rules):
+  return [REGISTERED_RULES[rule_name]() for rule_name in sorted(enabled_rules)]
 
 
 def get_problems(tree, rules, disables):
@@ -302,10 +304,10 @@ def get_problems(tree, rules, disables):
         yield problem, node
 
 
-def check_file(source_name):
+def check_file(source_name, enabled_rules):
   with open(source_name, "r") as source_file:
     raw_source = source_file.read()
-  rules = prepare_all_lint_node_rules()
+  rules = prepare_rules(enabled_rules)
 
   disables = {}
   tokens = list(tokenize.tokenize(io.BytesIO(raw_source.encode()).readline))
@@ -330,9 +332,21 @@ def check_file(source_name):
 
 if __name__ == "__main__":
   args = parser.parse_args()
+  enabled_rules = {
+    "AddingStringsRule",
+    "ForbidImportTestSuiteRule",
+    "ForbidTestSuiteInheritanceRule",
+    "SafeRecursiveRule",
+    "SetComparisonRule",
+    "TrailingCommaRule",
+  }
+  enabled_rules |= set(args.include.split(",") or [])
+  enabled_rules -= set(args.ignore.split(",") or [])
+  assert enabled_rules <= set(REGISTERED_RULES)
+
   problems = False
   for filename in args.files:
-    for message in check_file(filename):
+    for message in check_file(filename, enabled_rules):
       problems = True
       print(message)  # noqa: T001
   sys.exit(int(problems))
