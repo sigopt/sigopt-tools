@@ -5,7 +5,7 @@ import io
 
 import pytest
 
-from check_copyright_and_license_disclaimers import (
+from sigopt_tools.check_copyright_and_license_disclaimers import (
   COPYRIGHT,
   SPDX_LICENSE,
   Filetype,
