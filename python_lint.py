@@ -9,9 +9,6 @@ import os
 import tokenize
 
 
-# customlint: disable=AccidentalFormatStringRule
-
-
 def find_parent_function(node):
   if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
     return node
