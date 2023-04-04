@@ -7,6 +7,9 @@ import argparse
 import sys
 
 
+parser = argparse.ArgumentParser()
+parser.add_argument("files", type=str, nargs="+", help="File to lint")
+
 required_directives = [
   ("set -e", ("set +e", "# no_set_e")),
   ("set -o pipefail", ("set +o pipefail", "# no_pipefail")),
@@ -25,9 +28,7 @@ def shell_lint(file):
       yield f"error: Missing `{directive}` directive."
 
 
-if __name__ == "__main__":
-  parser = argparse.ArgumentParser()
-  parser.add_argument("files", type=str, nargs="+", help="File to lint")
+def main():
   args = parser.parse_args()
   responses = []
   for path in args.files:
@@ -36,3 +37,7 @@ if __name__ == "__main__":
   if responses:
     print("\n".join(responses))  # noqa: T001
     sys.exit(1)
+
+
+if __name__ == "__main__":
+  main()

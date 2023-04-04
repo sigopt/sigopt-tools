@@ -1,15 +1,15 @@
 - id: copyright-license-disclaimer
   name: copyright-license-disclaimer
-  entry: ./check_copyright_and_license_disclaimer.py
+  entry: python3 -m sigopt_tools.check_copyright_and_license_disclaimer
   language: python
   types: [python]
 - id: sigoptlint-python
   name: sigoptlint-python
-  entry: ./python_lint.py
+  entry: python3 -m sigopt_tools.python_lint
   language: python
   types: [python]
 - id: sigoptlint-shell
   name: sigoptlint-shell
-  entry: ./shell_lint.py
+  entry: python3 -m sigopt_tools.shell_lint
   language: python
   types: [shell]
