@@ -130,10 +130,17 @@ def test_generate_disclaimer(filetype, expected):
   [
     (dockerfile_disclaimer, dockerfile_example_1, Filetype.dockerfile),
     (dockerfile_disclaimer, dockerfile_example_2, Filetype.dockerfile),
+    (js_disclaimer, js_example_1, Filetype.js),
+    (js_disclaimer, js_example_2, Filetype.js),
     (less_disclaimer, less_example_1, Filetype.less),
     (less_disclaimer, less_example_2, Filetype.less),
     (markdown_disclaimer, markdown_example_1, Filetype.markdown),
     (markdown_disclaimer, markdown_example_2, Filetype.markdown),
+    (python_disclaimer, python_example_1, Filetype.python),
+    (python_disclaimer, python_example_2, Filetype.python),
+    (python_disclaimer, python_example_3, Filetype.python),
+    (shell_disclaimer, shell_example_1, Filetype.shell),
+    (shell_disclaimer, shell_example_2, Filetype.shell),
   ],
 )
 def test_file_has_disclaimer(disclaimer, content, filetype):
@@ -155,13 +162,9 @@ def test_file_has_disclaimer(disclaimer, content, filetype):
     (shell_disclaimer, shell_example_2, Filetype.shell, "bash"),
   ],
 )
-@pytest.mark.parametrize("with_shebang", (False, True))
-def test_file_has_disclaimer_maybe_with_shebang(disclaimer, content, filetype, exc, with_shebang):
-  if with_shebang:
-    content = f"#!/usr/bin/env {exc}\n{content}"
-    content_with_disclaimer = f"#!/usr/bin/env {exc}\n{disclaimer}{content}"
-  else:
-    content_with_disclaimer = f"{disclaimer}{content}"
+def test_file_has_disclaimer_with_shebang(disclaimer, content, filetype, exc):
+  content = f"#!/usr/bin/env {exc}\n{content}"
+  content_with_disclaimer = f"#!/usr/bin/env {exc}\n{disclaimer}{content}"
   file = io.StringIO(content)
   assert not file_has_disclaimer(file, filetype)
   file = io.StringIO(content_with_disclaimer)
@@ -173,10 +176,17 @@ def test_file_has_disclaimer_maybe_with_shebang(disclaimer, content, filetype, e
   [
     (dockerfile_disclaimer, dockerfile_example_1, Filetype.dockerfile),
     (dockerfile_disclaimer, dockerfile_example_2, Filetype.dockerfile),
+    (js_disclaimer, js_example_1, Filetype.js),
+    (js_disclaimer, js_example_2, Filetype.js),
     (less_disclaimer, less_example_1, Filetype.less),
     (less_disclaimer, less_example_2, Filetype.less),
     (markdown_disclaimer, markdown_example_1, Filetype.markdown),
     (markdown_disclaimer, markdown_example_2, Filetype.markdown),
+    (python_disclaimer, python_example_1, Filetype.python),
+    (python_disclaimer, python_example_2, Filetype.python),
+    (python_disclaimer, python_example_3, Filetype.python),
+    (shell_disclaimer, shell_example_1, Filetype.shell),
+    (shell_disclaimer, shell_example_2, Filetype.shell),
   ],
 )
 def test_fix_in_place(disclaimer, content, filetype):
@@ -184,3 +194,23 @@ def test_fix_in_place(disclaimer, content, filetype):
   fix_in_place(file, filetype)
   file.seek(0)
   assert file.read() == f"{disclaimer}{content}"
+
+
+@pytest.mark.parametrize(
+  "disclaimer,content,filetype,exc",
+  [
+    (js_disclaimer, js_example_1, Filetype.js, "node"),
+    (js_disclaimer, js_example_2, Filetype.js, "node"),
+    (python_disclaimer, python_example_1, Filetype.python, "python3"),
+    (python_disclaimer, python_example_2, Filetype.python, "python3"),
+    (python_disclaimer, python_example_3, Filetype.python, "python3"),
+    (shell_disclaimer, shell_example_1, Filetype.shell, "bash"),
+    (shell_disclaimer, shell_example_2, Filetype.shell, "bash"),
+  ],
+)
+def test_fix_in_place_with_shebang(disclaimer, content, filetype, exc):
+  shebang = f"#!/usr/bin/env {exc}\n"
+  file = io.StringIO(f"{shebang}{content}")
+  fix_in_place(file, filetype)
+  file.seek(0)
+  assert file.read() == f"{shebang}{disclaimer}{content}"
