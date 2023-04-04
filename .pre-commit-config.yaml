@@ -76,3 +76,10 @@ repos:
       #   additional_dependencies:
       #     - numpy
       #   types: [python]
+      - id: pytest
+        name: pytest
+        entry: pytest
+        additional_dependencies:
+          - pytest
+        language: python
+        types: [python]
