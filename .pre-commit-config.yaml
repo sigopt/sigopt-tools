@@ -55,15 +55,6 @@ repos:
           - pytest
   - repo: local
     hooks:
-      - id: apply-copyright-notice
-        name: Apply the copyright notice
-        description: This hook applies the copyright notice and license disclaimer to all files.
-        entry: ./check_copyright_and_license_disclaimers.py
-        args: [--fix-in-place]
-        language: python
-        types_or:
-          - python
-          - shell
       # - id: custom-bash-lint
       #   name: custom-bash-lint
       #   entry: tools/lint/bash/custom_lint.py
@@ -83,3 +74,12 @@ repos:
           - pytest
         language: python
         types: [python]
+      - id: apply-copyright-notice
+        name: Apply the copyright notice
+        description: This hook applies the copyright notice and license disclaimer to all files.
+        entry: ./check_copyright_and_license_disclaimers.py
+        args: [--fix-in-place]
+        language: python
+        types_or:
+          - python
+          - shell

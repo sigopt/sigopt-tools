@@ -10,6 +10,7 @@ from check_copyright_and_license_disclaimers import (
   LICENSE,
   Filetype,
   file_has_disclaimer,
+  fix_in_place,
   generate_disclaimer,
 )
 
@@ -165,3 +166,21 @@ def test_file_has_disclaimer_maybe_with_shebang(disclaimer, content, filetype, e
   assert not file_has_disclaimer(file, filetype)
   file = io.StringIO(content_with_disclaimer)
   assert file_has_disclaimer(file, filetype)
+
+
+@pytest.mark.parametrize(
+  "disclaimer,content,filetype",
+  [
+    (dockerfile_disclaimer, dockerfile_example_1, Filetype.dockerfile),
+    (dockerfile_disclaimer, dockerfile_example_2, Filetype.dockerfile),
+    (less_disclaimer, less_example_1, Filetype.less),
+    (less_disclaimer, less_example_2, Filetype.less),
+    (markdown_disclaimer, markdown_example_1, Filetype.markdown),
+    (markdown_disclaimer, markdown_example_2, Filetype.markdown),
+  ],
+)
+def test_fix_in_place(disclaimer, content, filetype):
+  file = io.StringIO(content)
+  fix_in_place(file, filetype)
+  file.seek(0)
+  assert file.read() == f"{disclaimer}{content}"

@@ -129,21 +129,17 @@ def check_all(directory, verbose=False):
   return missing
 
 
-def fix_in_place(filename, filetype, verbose):
-  if verbose:
-    print(f"Fixing {filename}")  # noqa: T001
-
+def fix_in_place(file, filetype):
   disclaimer = DISCLAIMERS_BY_FILETYPE[filetype]
-  with open(filename, "r+") as fp:
-    maybe_shebang = fp.readline()
-    remaining = fp.read()
+  maybe_shebang = file.readline()
+  remaining = file.read()
 
-    fp.seek(0)
+  file.seek(0)
 
-    if maybe_shebang.startswith("#!"):
-      fp.write(maybe_shebang + disclaimer + remaining)
-    else:
-      fp.write(disclaimer + maybe_shebang + remaining)
+  if maybe_shebang.startswith("#!"):
+    file.write(maybe_shebang + disclaimer + remaining)
+  else:
+    file.write(disclaimer + maybe_shebang + remaining)
 
 
 def fix_all(filenames, verbose=False):
@@ -151,7 +147,10 @@ def fix_all(filenames, verbose=False):
   for filename in filenames:
     filetype = guess_filetype(filename)
     try:
-      fix_in_place(filename, filetype, verbose=verbose)
+      if verbose:
+        print(f"Fixing {filename}")  # noqa: T001
+      with open(filename, "r+") as fp:
+        fix_in_place(fp, filetype)
     except Exception as e:
       print(f"failed to fix {filename}: {e}")  # noqa: T001
       failed_to_fix.append(filename)
