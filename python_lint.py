@@ -5,7 +5,6 @@
 
 import ast
 import io
-import os
 import tokenize
 
 
@@ -67,8 +66,7 @@ class SafeRecursiveRule(LintNodeRule):
 
 
 class SafeIteratorRule(LintNodeRule):
-  def __init__(self, prohibited_iterators):
-    self.prohibited_iterators = prohibited_iterators
+  prohibited_iterators = {"range", "zip", "map", "filter"}
 
   def is_iterator(self, node):
     return isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in self.prohibited_iterators
@@ -292,29 +290,35 @@ class SetComparisonRule(LintNodeRule):
     return None
 
 
-def prepare_all_lint_node_rules(filename):
-  rules = [
-    AccidentalFormatStringRule(),
-    AddingStringsRule(),
-    EmptySuperRule(),
-    ForbidImportTestSuiteRule(),
-    ForbidTestSuiteInheritanceRule(),
-    FormatStringRule(),
-    GeneratorExpressionRule(),
-    ProtobufMethodsRule(),
-    SafeIteratorRule({"range", "zip", "map", "filter"}),
-    SafeRecursiveRule(),
-    SafeYieldRule(),
-    SetComparisonRule(),
-    TrailingCommaRule(),
-  ]
-  if os.path.split(filename)[:3] == ["src", "python", "zigopt"]:
-    rules.extend(
-      [
-        AvoidDatetimeNowRule(),
-      ]
-    )
-  return rules
+REGISTERED_RULES = {}
+
+
+def register_rule(Rule):
+  assert issubclass(Rule, LintNodeRule)
+  REGISTERED_RULES[Rule.__name__] = Rule
+
+
+for Rule in [
+  AccidentalFormatStringRule,
+  AddingStringsRule,
+  AvoidDatetimeNowRule,
+  EmptySuperRule,
+  ForbidImportTestSuiteRule,
+  ForbidTestSuiteInheritanceRule,
+  FormatStringRule,
+  GeneratorExpressionRule,
+  ProtobufMethodsRule,
+  SafeIteratorRule,
+  SafeRecursiveRule,
+  SafeYieldRule,
+  SetComparisonRule,
+  TrailingCommaRule,
+]:
+  register_rule(Rule)
+
+
+def prepare_all_lint_node_rules():
+  return [Rule() for Rule in REGISTERED_RULES.values()]
 
 
 def get_problems(tree, rules, disables):
@@ -334,7 +338,7 @@ def get_problems(tree, rules, disables):
 def check_file(source_name):
   with open(source_name, "r") as source_file:
     raw_source = source_file.read()
-  rules = prepare_all_lint_node_rules(source_name)
+  rules = prepare_all_lint_node_rules()
 
   disables = {}
   tokens = list(tokenize.tokenize(io.BytesIO(raw_source.encode()).readline))
