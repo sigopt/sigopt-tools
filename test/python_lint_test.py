@@ -3,6 +3,7 @@ import ast
 import pytest
 
 from python_lint import (
+  AddingStringsRule,
   AvoidDatetimeNowRule,
   LintNodeRule,
   ProtobufMethodsRule,
@@ -282,6 +283,28 @@ class TestTrailingCommaRule(TestBase):
       "tuple((1,))",
       "def func(x):\n  return tuple((x,))\n",
       "def func(x):\n  yield tuple((x,))\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
+
+
+class TestAddingStringsRule(TestBase):
+  Rule = AddingStringsRule
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "'test adding' + 'strings'\n",
+    ],
+  )
+  def test_rule_fail(self, example):
+    self.assert_errors(example, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "('test'\n'adding'\n'strings')\n",
     ],
   )
   def test_rule_pass(self, example):
