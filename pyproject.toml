@@ -1,9 +1,16 @@
 title = 'SigOpt Tools'
 
+[tool.black]
+line-length = 120
+
 [tool.mypy]
 follow_imports = 'skip'
 
 disable_error_code = 'name-defined,var-annotated'
 
-[tool.black]
-line-length = 120
+[tool.vulture]
+paths = ['.']
+exclude = [
+  '.venv',
+  'venv',
+]
