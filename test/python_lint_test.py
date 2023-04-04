@@ -119,3 +119,41 @@ class TestSafeIteratorRule(TestBase):
       ]
     )
     self.assert_errors(content, count=2)
+
+  @pytest.mark.parametrize(
+    "returned",
+    [
+      "range(x)",
+      "zip(x, y)",
+      "map(int, x)",
+      "filter(bool, x)",
+    ],
+  )
+  def test_rule_pass_safe_iterator_wrap(self, returned):
+    content = "\n".join(
+      [
+        "def returns_safe_iterator(x):",
+        f"  return safe_iterator({returned})",
+        "",
+      ]
+    )
+    self.assert_errors(content, count=0)
+
+  @pytest.mark.parametrize(
+    "returned",
+    [
+      "range(x)",
+      "zip(x, y)",
+      "map(int, x)",
+      "filter(bool, x)",
+    ],
+  )
+  def test_rule_pass_safe_yield_from(self, returned):
+    content = "\n".join(
+      [
+        "def returns_safe_iterator(x):",
+        f"  yield from {returned}",
+        "",
+      ]
+    )
+    self.assert_errors(content, count=0)
