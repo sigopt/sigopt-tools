@@ -5,7 +5,7 @@ import ast
 
 import pytest
 
-from python_lint import (
+from sigopt_tools.python_lint import (
   AddingStringsRule,
   AvoidDatetimeNowRule,
   ForbidImportTestSuiteRule,

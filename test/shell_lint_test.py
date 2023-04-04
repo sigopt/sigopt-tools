@@ -6,7 +6,7 @@ import io
 
 import pytest
 
-from shell_lint import shell_lint
+from sigopt_tools.shell_lint import shell_lint
 
 
 @pytest.mark.parametrize(
