@@ -53,15 +53,23 @@ repos:
         args: [-rn, -sn]
         additional_dependencies:
           - pytest
-  # - repo: local
-  #   hooks:
-  #     # - id: pytest
-  #     #   name: pytest
-  #     #   entry: env PYTHONPATH=. pytest
-  #     #   additional_dependencies:
-  #     #     - pytest
-  #     #   language: python
-  #     #   types: [python]
-  #     #   stages: [commit]
-  #     #   pass_filenames: false
-  #     #   always_run: true
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: env PYTHONPATH=. pytest
+        additional_dependencies:
+          - pytest
+        language: python
+        types: [python]
+        stages: [commit]
+        pass_filenames: false
+        always_run: true
+      # - id: apply-copyright-notice
+      #   name: Apply the copyright notice
+      #   description: This hook applies the copyright notice and license disclaimer to all files.
+      #   entry: ./check_copyright_and_license_disclaimers.py
+      #   language: python
+      #   types_or:
+      #     - python
+      #     - shell
