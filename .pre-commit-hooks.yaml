@@ -10,6 +10,6 @@
   types: [python]
 - id: sigoptlint-shell
   name: sigoptlint-shell
-  entry: ./bash_lint.py
+  entry: ./shell_lint.py
   language: python
   types: [shell]
