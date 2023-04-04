@@ -53,15 +53,15 @@ repos:
         args: [-rn, -sn]
         additional_dependencies:
           - pytest
-  # - repo: local
-  #   hooks:
-  #     # - id: pytest
-  #     #   name: pytest
-  #     #   entry: env PYTHONPATH=. pytest
-  #     #   additional_dependencies:
-  #     #     - pytest
-  #     #   language: python
-  #     #   types: [python]
-  #     #   stages: [commit]
-  #     #   pass_filenames: false
-  #     #   always_run: true
+  - repo: local
+    hooks:
+      - id: pytest
+        name: pytest
+        entry: env PYTHONPATH=. pytest
+        additional_dependencies:
+          - pytest
+        language: python
+        types: [python]
+        stages: [commit]
+        pass_filenames: false
+        always_run: true

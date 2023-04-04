@@ -14,17 +14,15 @@ required_directives = [
 ]
 
 
-def custom_bash_lint(filename):
-  with open(filename, "r") as f:
-    lines = f.readlines()
+def bash_lint(file):
+  lines = file.readlines()
   for directive, alternatives in required_directives:
     for line in lines:
       line = line.strip()
       if line == directive or line in alternatives:
         break
     else:
-      return f"{filename}:1:1: error: Missing `{directive}` directive."
-  return None
+      yield f"error: Missing `{directive}` directive."
 
 
 if __name__ == "__main__":
@@ -33,9 +31,8 @@ if __name__ == "__main__":
   args = parser.parse_args()
   responses = []
   for path in args.files:
-    response = custom_bash_lint(path)
-    if response:
-      responses.append(response)
+    with open(path) as fp:
+      responses.extend([f"{path}: {error}" for error in bash_lint(fp)])
   if responses:
     print("\n".join(responses))  # noqa: T001
     sys.exit(1)
