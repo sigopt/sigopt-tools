@@ -184,18 +184,6 @@ class AddingStringsRule(LintNodeRule):
     return None
 
 
-class EmptySuperRule(LintNodeRule):
-  def check_node(self, node):
-    if (
-      isinstance(node, ast.Call)
-      and isinstance(node.func, ast.Name)
-      and node.func.id == "super"
-      and (node.args or node.keywords)
-    ):
-      return "call to super() should have no arguments"
-    return None
-
-
 class GeneratorExpressionRule(LintNodeRule):
   invalid_builtins = (
     "map",
@@ -279,7 +267,6 @@ def register_rule(Rule):
 for Rule in [
   AddingStringsRule,
   AvoidDatetimeNowRule,
-  EmptySuperRule,
   ForbidImportTestSuiteRule,
   ForbidTestSuiteInheritanceRule,
   GeneratorExpressionRule,
