@@ -262,6 +262,21 @@ class SetComparisonRule(LintNodeRule):
     return None
 
 
+class NoImportLibsigoptComputeRule(LintNodeRule):
+  def check_node(self, node):
+    error_msg = (
+      "Should not import from libsigopt.compute, consider moving the class/method to libsigopt.aux or libsigopt.views"
+    )
+    if isinstance(node, ast.Import):
+      for name in node.names:
+        if name.name == "libsigopt.compute":
+          return error_msg
+    if isinstance(node, ast.ImportFrom):
+      if node.module.startswith("libsigopt.compute"):
+        return error_msg
+    return None
+
+
 REGISTERED_RULES = {}
 
 
@@ -276,6 +291,7 @@ for Rule in [
   ForbidImportTestSuiteRule,
   ForbidTestSuiteInheritanceRule,
   GeneratorExpressionRule,
+  NoImportLibsigoptComputeRule,
   ProtobufMethodsRule,
   SafeIteratorRule,
   SafeRecursiveRule,

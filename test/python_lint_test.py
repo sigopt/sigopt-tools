@@ -12,6 +12,7 @@ from sigopt_tools.python_lint import (
   ForbidTestSuiteInheritanceRule,
   GeneratorExpressionRule,
   LintNodeRule,
+  NoImportLibsigoptComputeRule,
   ProtobufMethodsRule,
   SafeIteratorRule,
   SafeRecursiveRule,
@@ -403,6 +404,34 @@ class TestSetComparisonRule(RuleTestBase):
     [
       "all(x in other for x in range(10))\n",
       "all(x in range(10) for x in other)\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
+
+
+class TestNoImportLibsigoptComputeRule(RuleTestBase):
+  Rule = NoImportLibsigoptComputeRule
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "from libsigopt.compute import *\n",
+      "import libsigopt.compute\n",
+    ],
+  )
+  def test_rule_fail(self, example):
+    self.assert_errors(example, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "from libsigopt import *\n",
+      "from libsigopt.aux import *\n",
+      "from libsigopt.views import *\n",
+      "import libsigopt.aux\n",
+      "import libsigopt.views\n",
+      "import libsigopt\n",
     ],
   )
   def test_rule_pass(self, example):
