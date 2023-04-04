@@ -2,7 +2,14 @@ import ast
 
 import pytest
 
-from python_lint import AvoidDatetimeNowRule, LintNodeRule, SafeIteratorRule, SafeRecursiveRule, get_problems
+from python_lint import (
+  AvoidDatetimeNowRule,
+  LintNodeRule,
+  ProtobufMethodsRule,
+  SafeIteratorRule,
+  SafeRecursiveRule,
+  get_problems,
+)
 
 
 class TestBase:
@@ -156,4 +163,30 @@ class TestSafeIteratorRule(TestBase):
         "",
       ]
     )
+    self.assert_errors(content, count=0)
+
+
+class TestProtobufMethodsRule(TestBase):
+  Rule = ProtobufMethodsRule
+
+  @pytest.mark.parametrize(
+    "method",
+    [
+      "CopyFrom",
+      "MergeFrom",
+    ],
+  )
+  def test_rule_errors(self, method):
+    content = f"x.{method}(y)\n"
+    self.assert_errors(content, count=1)
+
+  @pytest.mark.parametrize(
+    "method",
+    [
+      "CopyFrom",
+      "MergeFrom",
+    ],
+  )
+  def test_rule_pass(self, method):
+    content = f"{method}(x, y)\n"
     self.assert_errors(content, count=0)
