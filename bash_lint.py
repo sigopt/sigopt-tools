@@ -10,7 +10,7 @@ import sys
 required_directives = [
   ("set -e", ("set +e", "# no_set_e")),
   ("set -o pipefail", ("set +o pipefail", "# no_pipefail")),
-  ("#!/usr/bin/env bash", ()),
+  ("#!/usr/bin/env bash", ("#!/usr/bin/env sh",)),
 ]
 
 
