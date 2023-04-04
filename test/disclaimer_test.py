@@ -126,10 +126,10 @@ def test_file_has_disclaimer(disclaimer, content, filetype):
 def test_file_has_disclaimer_maybe_with_shebang(disclaimer, content, filetype, exc, with_shebang):
   if with_shebang:
     content = f"#!/usr/bin/env {exc}\n{content}"
-    disclaimer_content = f"#!/usr/bin/env {exc}\n{disclaimer}{content}"
+    content_with_disclaimer = f"#!/usr/bin/env {exc}\n{disclaimer}{content}"
   else:
-    disclaimer_content = f"{disclaimer}{content}"
+    content_with_disclaimer = f"{disclaimer}{content}"
   file = io.StringIO(content)
   assert not file_has_disclaimer(file, filetype)
-  file = io.StringIO(disclaimer_content)
+  file = io.StringIO(content_with_disclaimer)
   assert file_has_disclaimer(file, filetype)
