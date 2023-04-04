@@ -330,7 +330,7 @@ def check_file(source_name, enabled_rules):
     yield f"{source_name}:{node.lineno}:{node.col_offset}: {message}"
 
 
-if __name__ == "__main__":
+def main():
   args = parser.parse_args()
   enabled_rules = {
     "AddingStringsRule",
@@ -350,3 +350,7 @@ if __name__ == "__main__":
       problems = True
       print(message)  # noqa: T001
   sys.exit(int(problems))
+
+
+if __name__ == "__main__":
+  main()

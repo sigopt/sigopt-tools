@@ -10,7 +10,12 @@ import re
 import sys
 
 
-# customlint: disable=AccidentalFormatStringRule
+parser = argparse.ArgumentParser()
+parser.add_argument("files", action="extend", nargs="+", type=str)
+parser.add_argument("--fix-in-place", "-f", action="store_true")
+parser.add_argument("--license", required=True)
+parser.add_argument("--owner", default="Intel Corporation")
+parser.add_argument("--verbose", "-v", action="store_true")
 
 
 YEAR = datetime.datetime.now().year
@@ -145,14 +150,7 @@ def fix_all(filenames, license_, owner, verbose=False):
   return failed_to_fix
 
 
-if __name__ == "__main__":
-  parser = argparse.ArgumentParser()
-  parser.add_argument("files", action="extend", nargs="+", type=str)
-  parser.add_argument("--fix-in-place", "-f", action="store_true")
-  parser.add_argument("--license", required=True)
-  parser.add_argument("--owner", default="Intel Corporation")
-  parser.add_argument("--verbose", "-v", action="store_true")
-
+def main():
   args = parser.parse_args()
   missing = []
   for filename in args.files:
@@ -167,3 +165,7 @@ if __name__ == "__main__":
     sys.exit(1)
   elif args.verbose:
     print("\nAll files have disclaimer")  # noqa: T001
+
+
+if __name__ == "__main__":
+  main()
