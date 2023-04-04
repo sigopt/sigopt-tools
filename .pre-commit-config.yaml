@@ -1,0 +1,75 @@
+ci:
+  skip: [detect-aws-credentials, eslint, hadolint-docker, pylint, shellcheck]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v4.4.0
+    hooks:
+      - id: check-merge-conflict
+      - id: no-commit-to-branch
+        args: [--branch=main]
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: [--maxkb=256]
+      - id: check-ast
+      - id: check-toml
+      - id: check-yaml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: trailing-whitespace
+  - repo: https://github.com/sigopt/black.git
+    rev: sigopt-22.10.0
+    hooks:
+      - id: black
+        args: [--experimental-string-processing]
+  - repo: https://github.com/PyCQA/flake8.git
+    rev: "6.0.0"
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-print==4.0.0
+        entry: ./pp flake8
+        args: [--config=setup.cfg]
+  - repo: https://github.com/PyCQA/isort.git
+    rev: "5.12.0"
+    hooks:
+      - id: isort
+        entry: ./pp isort
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.1.1"
+    hooks:
+      - id: mypy
+  - repo: https://github.com/jendrikseipp/vulture.git
+    rev: "v2.7"
+    hooks:
+      - id: vulture
+  - repo: https://github.com/pylint-dev/pylint.git
+    rev: "v3.0.0a6"
+    hooks:
+      - id: pylint
+        args: [-rn, -sn]
+  - repo: local
+    hooks:
+      - id: apply-copyright-notice
+        name: Apply the copyright notice
+        description: This hook applies the copyright notice and license disclaimer to all files.
+        entry: check_copyright_and_license_disclaimers.py
+        args: [--fix-in-place]
+        language: python
+        types_or:
+          - python
+          - shell
+      - id: custom-bash-lint
+        name: custom-bash-lint
+        entry: tools/lint/bash/custom_lint.py
+        language: python
+        types: [shell]
+      - id: custom-python-lint
+        name: custom-python-lint
+        entry: ./pp tools/lint/python/custom_lint.py
+        language: python
+        additional_dependencies:
+          - numpy
+        types: [python]
