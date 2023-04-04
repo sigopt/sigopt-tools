@@ -6,7 +6,7 @@ import io
 
 import pytest
 
-from bash_lint import bash_lint
+from shell_lint import shell_lint
 
 
 @pytest.mark.parametrize(
@@ -41,7 +41,7 @@ from bash_lint import bash_lint
     "echo testing\n",
   ],
 )
-def test_bash_lint(shebang, shebang_issues, sete, sete_issues, pipefail, pipefail_issues, script):
+def test_shell_lint(shebang, shebang_issues, sete, sete_issues, pipefail, pipefail_issues, script):
   content = "\n".join(
     [
       shebang,
@@ -51,4 +51,4 @@ def test_bash_lint(shebang, shebang_issues, sete, sete_issues, pipefail, pipefai
     ]
   )
   file = io.StringIO(content)
-  assert len(list(bash_lint(file))) == sum([shebang_issues, sete_issues, pipefail_issues])
+  assert len(list(shell_lint(file))) == sum([shebang_issues, sete_issues, pipefail_issues])

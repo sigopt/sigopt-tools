@@ -1,0 +1,15 @@
+- id: copyright-license-disclaimer
+  name: copyright-license-disclaimer
+  entry: ./check_copyright_and_license_disclaimer.py
+  language: python
+  types: [python]
+- id: sigoptlint-python
+  name: sigoptlint-python
+  entry: ./python_lint.py
+  language: python
+  types: [python]
+- id: sigoptlint-shell
+  name: sigoptlint-shell
+  entry: ./shell_lint.py
+  language: python
+  types: [shell]

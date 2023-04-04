@@ -14,7 +14,7 @@ required_directives = [
 ]
 
 
-def bash_lint(file):
+def shell_lint(file):
   lines = file.readlines()
   for directive, alternatives in required_directives:
     for line in lines:
@@ -32,7 +32,7 @@ if __name__ == "__main__":
   responses = []
   for path in args.files:
     with open(path) as fp:
-      responses.extend([f"{path}: {error}" for error in bash_lint(fp)])
+      responses.extend([f"{path}: {error}" for error in shell_lint(fp)])
   if responses:
     print("\n".join(responses))  # noqa: T001
     sys.exit(1)
