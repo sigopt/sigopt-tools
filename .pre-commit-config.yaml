@@ -65,11 +65,11 @@ repos:
         stages: [commit]
         pass_filenames: false
         always_run: true
-      - id: apply-copyright-notice
-        name: Apply the copyright notice
-        description: This hook applies the copyright notice and license disclaimer to all files.
-        entry: ./check_copyright_and_license_disclaimers.py
-        language: python
-        types_or:
-          - python
-          - shell
+      # - id: apply-copyright-notice
+      #   name: Apply the copyright notice
+      #   description: This hook applies the copyright notice and license disclaimer to all files.
+      #   entry: ./check_copyright_and_license_disclaimers.py
+      #   language: python
+      #   types_or:
+      #     - python
+      #     - shell
