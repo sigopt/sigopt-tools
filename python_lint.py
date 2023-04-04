@@ -182,15 +182,6 @@ class FormatStringRule(ProhibitedMethodsRule):
     return None
 
 
-class AccidentalFormatStringRule(LintNodeRule):
-  def check_node(self, node):
-    if isinstance(node, ast.Str) and "{" in node.s and "}" in node.s:
-      # pylint: disable=f-string-without-interpolation
-      return f"{{}} detected in string constant, did you forget `f`?"  # noqa: F541
-      # pylint: enable=f-string-without-interpolation
-    return None
-
-
 class AddingStringsRule(LintNodeRule):
   def check_node(self, node):
     if (
@@ -295,7 +286,6 @@ def register_rule(Rule):
 
 
 for Rule in [
-  AccidentalFormatStringRule,
   AddingStringsRule,
   AvoidDatetimeNowRule,
   EmptySuperRule,
