@@ -2,7 +2,13 @@
   name: copyright-license-disclaimer
   entry: copyright-license-disclaimer --fix-in-place
   language: python
-  types: [python]
+  types_or:
+    - dockerfile
+    - javascript
+    - less
+    - markdown
+    - python
+    - shell
 - id: sigoptlint-python
   name: sigoptlint-python
   entry: sigoptlint-python
