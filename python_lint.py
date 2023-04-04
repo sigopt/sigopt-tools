@@ -3,9 +3,15 @@
 #
 # SPDX-License-Identifier: Apache License 2.0
 
+import argparse
 import ast
 import io
+import sys
 import tokenize
+
+
+parser = argparse.ArgumentParser(description="SigOpt lint rules for python")
+parser.add_argument("files", nargs="+")
 
 
 def find_parent_function(node):
@@ -323,11 +329,6 @@ def check_file(source_name):
 
 
 if __name__ == "__main__":
-  import argparse
-  import sys
-
-  parser = argparse.ArgumentParser(description="SigOpt lint rules for python")
-  parser.add_argument("files", nargs="+")
   args = parser.parse_args()
   problems = False
   for filename in args.files:
