@@ -324,21 +324,14 @@ def check_file(source_name):
 
 if __name__ == "__main__":
   import argparse
-  import subprocess
   import sys
 
   parser = argparse.ArgumentParser(description="SigOpt lint rules for python")
-  parser.add_argument("source_names", nargs="*", help="Sources to check (default to `git ls-files '*.py'`)")
+  parser.add_argument("files", nargs="+")
   args = parser.parse_args()
-  if args.source_names:
-    source_names = args.source_names
-  else:
-    source_names = (
-      e for e in subprocess.check_output(["git", "ls-files", "*.py"]).decode("utf-8").split("\n") if len(e)
-    )
   problems = False
-  for source_name in source_names:
-    for message in check_file(source_name):
+  for filename in args.files:
+    for message in check_file(filename):
       problems = True
       print(message)  # noqa: T001
   sys.exit(int(problems))
