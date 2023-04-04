@@ -5,6 +5,7 @@ import pytest
 from python_lint import (
   AddingStringsRule,
   AvoidDatetimeNowRule,
+  GeneratorExpressionRule,
   LintNodeRule,
   ProtobufMethodsRule,
   SafeIteratorRule,
@@ -305,6 +306,25 @@ class TestAddingStringsRule(TestBase):
     "example",
     [
       "('test'\n'adding'\n'strings')\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
+
+
+class TestGeneratorExpressionRule(TestBase):
+  Rule = GeneratorExpressionRule
+
+  @pytest.mark.parametrize("builtin", ["map", "filter"])
+  def test_rule_fail(self, builtin):
+    content = f"{builtin}(int, range(10))\n"
+    self.assert_errors(content, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "[int(x) for x in range(10)]\n",
+      "[x for x in range(10) if int(x)]\n",
     ],
   )
   def test_rule_pass(self, example):
