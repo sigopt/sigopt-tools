@@ -91,18 +91,15 @@ def generate_disclaimer(filetype):
 DISCLAIMERS_BY_FILETYPE = {filetype: generate_disclaimer(filetype) for filetype in FILETYPES}
 
 
-def file_has_disclaimer(file, filetype, verbose=False):
-  if verbose:
-    print(f"Checking: {filename}")  # noqa: T001
-  with open(filename) as fp:
-    to_check = []
-    line = next(fp)
-    if line.startswith("#!"):
-      line = next(fp)
-    if line in ("/**\n", "<!--\n"):
-      line = next(fp)
-    to_check.append(line)
-    to_check.extend(l for l, _ in zip(fp, range(len(DISCLAIMER_RE_LINES) - 1)))
+def file_has_disclaimer(file, filetype):
+  to_check = []
+  line = next(file)
+  if line.startswith("#!"):
+    line = next(file)
+  if line in ("/**\n", "<!--\n"):
+    line = next(file)
+  to_check.append(line)
+  to_check.extend(l for l, _ in zip(file, range(len(DISCLAIMER_RE_LINES) - 1)))
 
   to_check = "".join(to_check).split("\n")
   if len(to_check) < len(DISCLAIMER_RE_LINES):
@@ -124,8 +121,10 @@ def check_all(directory, verbose=False):
       absolute_filename = os.path.join(dirpath, filename)
       filetype = guess_filetype(absolute_filename)
       if filetype and os.stat(absolute_filename).st_size > 0:
+        if verbose:
+          print(f"Checking: {absolute_filename}")  # noqa: T001
         with open(absolute_filename) as fp:
-          if not file_has_disclaimer(fp, filetype, verbose=verbose):
+          if not file_has_disclaimer(fp, filetype):
             missing.append(absolute_filename)
   return missing
 

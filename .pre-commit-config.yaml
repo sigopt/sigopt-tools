@@ -11,6 +11,8 @@ repos:
       - id: detect-private-key
       - id: check-added-large-files
         args: [--maxkb=256]
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
       - id: check-ast
       - id: check-toml
       - id: check-yaml
@@ -53,7 +55,7 @@ repos:
       - id: apply-copyright-notice
         name: Apply the copyright notice
         description: This hook applies the copyright notice and license disclaimer to all files.
-        entry: check_copyright_and_license_disclaimers.py
+        entry: ./check_copyright_and_license_disclaimers.py
         args: [--fix-in-place]
         language: python
         types_or:
