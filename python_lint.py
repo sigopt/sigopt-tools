@@ -173,15 +173,6 @@ class TrailingCommaRule(LintNodeRule):
     return None
 
 
-class FormatStringRule(ProhibitedMethodsRule):
-  prohibited_methods = {"format"}
-
-  def check_node(self, node):
-    if self.is_prohibited_method_call(node) and isinstance(node.func.value, (ast.Str, ast.JoinedStr)):
-      return "use formatted string literals instead of str.format"
-    return None
-
-
 class AddingStringsRule(LintNodeRule):
   def check_node(self, node):
     if (
@@ -291,7 +282,6 @@ for Rule in [
   EmptySuperRule,
   ForbidImportTestSuiteRule,
   ForbidTestSuiteInheritanceRule,
-  FormatStringRule,
   GeneratorExpressionRule,
   ProtobufMethodsRule,
   SafeIteratorRule,
