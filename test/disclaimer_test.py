@@ -5,7 +5,13 @@ import io
 
 import pytest
 
-from check_copyright_and_license_disclaimers import COPYRIGHT, LICENSE, file_has_disclaimer
+from check_copyright_and_license_disclaimers import (
+  COPYRIGHT,
+  LICENSE,
+  Filetype,
+  file_has_disclaimer,
+  generate_disclaimer,
+)
 
 
 js_disclaimer = "\n".join(
@@ -15,6 +21,7 @@ js_disclaimer = "\n".join(
     " *",
     f" * {LICENSE}",
     " */",
+    "",
     "",
   ]
 )
@@ -66,6 +73,7 @@ markdown_disclaimer = "\n".join(
     f"{LICENSE}",
     "-->",
     "",
+    "",
   ]
 )
 
@@ -79,7 +87,16 @@ markdown_example_1 = "\n".join(
 
 markdown_example_2 = "# Title\n"
 
-less_disclaimer = js_disclaimer
+less_disclaimer = "\n".join(
+  [
+    "/**",
+    f" * {COPYRIGHT}",
+    " *",
+    f" * {LICENSE}",
+    " */",
+    "",
+  ]
+)
 
 less_example_1 = "\n".join(
   [
@@ -93,14 +110,29 @@ less_example_2 = '@import "../lib/constants.less";\n'
 
 
 @pytest.mark.parametrize(
+  "filetype,expected",
+  [
+    (Filetype.dockerfile, dockerfile_disclaimer),
+    (Filetype.js, js_disclaimer),
+    (Filetype.less, less_disclaimer),
+    (Filetype.markdown, markdown_disclaimer),
+    (Filetype.python, python_disclaimer),
+    (Filetype.shell, shell_disclaimer),
+  ],
+)
+def test_generate_disclaimer(filetype, expected):
+  assert generate_disclaimer(filetype) == expected
+
+
+@pytest.mark.parametrize(
   "disclaimer,content,filetype",
   [
-    (dockerfile_disclaimer, dockerfile_example_1, "Dockerfile"),
-    (dockerfile_disclaimer, dockerfile_example_2, "Dockerfile"),
-    (less_disclaimer, less_example_1, ".less"),
-    (less_disclaimer, less_example_2, ".less"),
-    (markdown_disclaimer, markdown_example_1, ".md"),
-    (markdown_disclaimer, markdown_example_2, ".md"),
+    (dockerfile_disclaimer, dockerfile_example_1, Filetype.dockerfile),
+    (dockerfile_disclaimer, dockerfile_example_2, Filetype.dockerfile),
+    (less_disclaimer, less_example_1, Filetype.less),
+    (less_disclaimer, less_example_2, Filetype.less),
+    (markdown_disclaimer, markdown_example_1, Filetype.markdown),
+    (markdown_disclaimer, markdown_example_2, Filetype.markdown),
   ],
 )
 def test_file_has_disclaimer(disclaimer, content, filetype):
@@ -113,13 +145,13 @@ def test_file_has_disclaimer(disclaimer, content, filetype):
 @pytest.mark.parametrize(
   "disclaimer,content,filetype,exc",
   [
-    (js_disclaimer, js_example_1, ".js", "node"),
-    (js_disclaimer, js_example_2, ".js", "node"),
-    (python_disclaimer, python_example_1, ".py", "python3"),
-    (python_disclaimer, python_example_2, ".py", "python3"),
-    (python_disclaimer, python_example_3, ".py", "python3"),
-    (shell_disclaimer, shell_example_1, ".sh", "bash"),
-    (shell_disclaimer, shell_example_2, ".sh", "bash"),
+    (js_disclaimer, js_example_1, Filetype.js, "node"),
+    (js_disclaimer, js_example_2, Filetype.js, "node"),
+    (python_disclaimer, python_example_1, Filetype.python, "python3"),
+    (python_disclaimer, python_example_2, Filetype.python, "python3"),
+    (python_disclaimer, python_example_3, Filetype.python, "python3"),
+    (shell_disclaimer, shell_example_1, Filetype.shell, "bash"),
+    (shell_disclaimer, shell_example_2, Filetype.shell, "bash"),
   ],
 )
 @pytest.mark.parametrize("with_shebang", (False, True))
