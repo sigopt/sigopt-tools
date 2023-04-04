@@ -13,6 +13,7 @@ from python_lint import (
   SafeIteratorRule,
   SafeRecursiveRule,
   SafeYieldRule,
+  SetComparisonRule,
   TrailingCommaRule,
   get_problems,
 )
@@ -373,6 +374,32 @@ class TestForbidImportTestSuiteRule(RuleTestBase):
     [
       "from . import NotTestClass\n",
       "from . import not_test_function\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
+
+
+class TestSetComparisonRule(RuleTestBase):
+  Rule = SetComparisonRule
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "{x for x in range(10)} <= other\n",
+      "{x for x in range(10)} >= other\n",
+      "other <= {x for x in range(10)}\n",
+      "other >= {x for x in range(10)}\n",
+    ],
+  )
+  def test_rule_fail(self, example):
+    self.assert_errors(example, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "all(x in other for x in range(10))\n",
+      "all(x in range(10) for x in other)\n",
     ],
   )
   def test_rule_pass(self, example):

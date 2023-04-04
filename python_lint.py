@@ -228,8 +228,6 @@ class ForbidImportTestSuiteRule(LintNodeRule):
 
 class SetComparisonRule(LintNodeRule):
   invalid_ops = (
-    ast.Lt,
-    ast.Gt,
     ast.LtE,
     ast.GtE,
   )
