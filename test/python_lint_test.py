@@ -9,6 +9,7 @@ from python_lint import (
   SafeIteratorRule,
   SafeRecursiveRule,
   SafeYieldRule,
+  TrailingCommaRule,
   get_problems,
 )
 
@@ -253,3 +254,35 @@ class TestSafeYieldRule(TestBase):
     problems = list(self.check(content))
     assert len(problems) == 1
     assert problems[0][0].startswith("Do not mix ")
+
+
+class TestTrailingCommaRule(TestBase):
+  Rule = TrailingCommaRule
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "x = 1,",
+      "x += 1,",
+      "print(1),",
+      "1,",
+      "def func(x):\n  return x,\n",
+      "def func(x):\n  yield x,\n",
+    ],
+  )
+  def test_rule_fail(self, example):
+    self.assert_errors(example, count=1)
+
+  @pytest.mark.parametrize(
+    "example",
+    [
+      "x = tuple((1,))",
+      "x += tuple((1,))",
+      "tuple((print(1),))",
+      "tuple((1,))",
+      "def func(x):\n  return tuple((x,))\n",
+      "def func(x):\n  yield tuple((x,))\n",
+    ],
+  )
+  def test_rule_pass(self, example):
+    self.assert_errors(example, count=0)
