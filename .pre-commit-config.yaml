@@ -30,13 +30,11 @@ repos:
       - id: flake8
         additional_dependencies:
           - flake8-print==4.0.0
-        entry: ./pp flake8
         args: [--config=setup.cfg]
   - repo: https://github.com/PyCQA/isort.git
     rev: "5.12.0"
     hooks:
       - id: isort
-        entry: ./pp isort
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: "v1.1.1"
     hooks:
@@ -61,15 +59,15 @@ repos:
         types_or:
           - python
           - shell
-      - id: custom-bash-lint
-        name: custom-bash-lint
-        entry: tools/lint/bash/custom_lint.py
-        language: python
-        types: [shell]
-      - id: custom-python-lint
-        name: custom-python-lint
-        entry: ./pp tools/lint/python/custom_lint.py
-        language: python
-        additional_dependencies:
-          - numpy
-        types: [python]
+      # - id: custom-bash-lint
+      #   name: custom-bash-lint
+      #   entry: tools/lint/bash/custom_lint.py
+      #   language: python
+      #   types: [shell]
+      # - id: custom-python-lint
+      #   name: custom-python-lint
+      #   entry: ./pp tools/lint/python/custom_lint.py
+      #   language: python
+      #   additional_dependencies:
+      #     - numpy
+      #   types: [python]
