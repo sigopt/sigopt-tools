@@ -23,8 +23,7 @@ class LintNodeRule(object):
 
 
 class ProhibitedMethodsRule(LintNodeRule):
-  def __init__(self, prohibited_methods):
-    self.prohibited_methods = prohibited_methods
+  prohibited_methods: set[str] = set()
 
   def is_prohibited_method_call(self, node):
     return (
@@ -33,8 +32,7 @@ class ProhibitedMethodsRule(LintNodeRule):
 
 
 class AvoidDatetimeNowRule(ProhibitedMethodsRule):
-  def __init__(self):
-    super().__init__(prohibited_methods={"now", "utcnow"})
+  prohibited_methods = {"now", "utcnow"}
 
   def check_node(self, node):
     if (
@@ -85,8 +83,7 @@ class SafeIteratorRule(LintNodeRule):
 
 
 class ProtobufMethodsRule(ProhibitedMethodsRule):
-  def __init__(self):
-    super().__init__(prohibited_methods={"MergeFrom", "CopyFrom"})
+  prohibited_methods = {"MergeFrom", "CopyFrom"}
 
   def check_node(self, node):
     if self.is_prohibited_method_call(node):
@@ -177,8 +174,7 @@ class TrailingCommaRule(LintNodeRule):
 
 
 class FormatStringRule(ProhibitedMethodsRule):
-  def __init__(self):
-    super().__init__(prohibited_methods={"format"})
+  prohibited_methods = {"format"}
 
   def check_node(self, node):
     if self.is_prohibited_method_call(node) and isinstance(node.func.value, (ast.Str, ast.JoinedStr)):
