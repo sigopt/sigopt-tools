@@ -33,7 +33,7 @@ repos:
       - id: black
         args: [--preview]
   - repo: https://github.com/PyCQA/flake8.git
-    rev: "6.0.0"
+    rev: "6.1.0"
     hooks:
       - id: flake8
         additional_dependencies:
@@ -44,15 +44,15 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.4.1"
+    rev: "v1.5.1"
     hooks:
       - id: mypy
   - repo: https://github.com/jendrikseipp/vulture.git
-    rev: "v2.7"
+    rev: "v2.9.1"
     hooks:
       - id: vulture
   - repo: https://github.com/pylint-dev/pylint.git
-    rev: "v3.0.0a6"
+    rev: "v3.0.0a7"
     hooks:
       - id: pylint
         entry: env PYTHONPATH=. pylint
