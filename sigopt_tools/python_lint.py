@@ -315,8 +315,7 @@ def get_problems(tree, rules, disables):
       rule_name = rule.__class__.__name__
       if hasattr(node, "lineno") and rule_name in disables and disables[rule_name] <= node.lineno:
         continue
-      problem = rule.check_node(node)
-      if problem:
+      if problem := rule.check_node(node):
         yield problem, node
 
 
