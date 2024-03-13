@@ -2,7 +2,7 @@ ci:
   skip: [detect-aws-credentials]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: check-merge-conflict
       - id: no-commit-to-branch
@@ -33,26 +33,26 @@ repos:
       - id: black
         args: [--preview]
   - repo: https://github.com/PyCQA/flake8.git
-    rev: "6.1.0"
+    rev: "7.0.0"
     hooks:
       - id: flake8
         additional_dependencies:
           - flake8-print==4.0.0
         args: [--config=setup.cfg]
   - repo: https://github.com/PyCQA/isort.git
-    rev: "5.12.0"
+    rev: "5.13.2"
     hooks:
       - id: isort
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.5.1"
+    rev: "v1.9.0"
     hooks:
       - id: mypy
   - repo: https://github.com/jendrikseipp/vulture.git
-    rev: "v2.9.1"
+    rev: "v2.11"
     hooks:
       - id: vulture
   - repo: https://github.com/pylint-dev/pylint.git
-    rev: "v3.0.0a7"
+    rev: "v3.1.0"
     hooks:
       - id: pylint
         entry: env PYTHONPATH=. pylint
