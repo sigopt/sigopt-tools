@@ -44,7 +44,7 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.10.0"
+    rev: "v1.10.1"
     hooks:
       - id: mypy
   - repo: https://github.com/jendrikseipp/vulture.git
@@ -52,7 +52,7 @@ repos:
     hooks:
       - id: vulture
   - repo: https://github.com/pylint-dev/pylint.git
-    rev: "v3.2.3"
+    rev: "v3.2.4"
     hooks:
       - id: pylint
         entry: env PYTHONPATH=. pylint
