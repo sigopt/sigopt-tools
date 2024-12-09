@@ -48,11 +48,11 @@ repos:
     hooks:
       - id: mypy
   - repo: https://github.com/jendrikseipp/vulture.git
-    rev: "v2.13"
+    rev: "v2.14"
     hooks:
       - id: vulture
   - repo: https://github.com/pylint-dev/pylint.git
-    rev: "v3.3.1"
+    rev: "v3.3.2"
     hooks:
       - id: pylint
         entry: env PYTHONPATH=. pylint
